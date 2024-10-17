@@ -1,8 +1,8 @@
 from datetime import datetime
-from flask import request, jsonify
+from flask import request, jsonify,abort
 from flask_restful import Resource
 from config import app, db, api
-from models import Customer, CustomerProfile, Car, Rental, Admin
+from models import Customer, CustomerProfile, Car, Rental, Admin, User
 #from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route('/')
@@ -179,6 +179,44 @@ class AdminDetailResource(Resource):
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
+class UserResource(Resource):
+    def get(self, user_id):
+        user = User.query.get(user_id)
+        if user is None:
+            abort(404, description="User not found")
+        return jsonify(user.to_dict()), 200
+
+    def post(self):
+        data = request.get_json()
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+        )
+        new_user.set_password(data['password'])
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify(new_user.to_dict()), 201
+
+    def put(self, user_id):
+        user = User.query.get(user_id)
+        if user is None:
+            abort(404, description="User not found")
+        data = request.get_json()
+        user.username = data.get('username', user.username)
+        user.email = data.get('email', user.email)
+        if 'password' in data:
+            user.set_password(data['password'])
+        db.session.commit()
+        return jsonify(user.to_dict()), 200
+
+    def delete(self, user_id):
+        user = User.query.get(user_id)
+        if user is None:
+            abort(404, description="User not found")
+        db.session.delete(user)
+        db.session.commit()
+        return '', 204
+
 # Add Resources to API
 api.add_resource(CustomersResource, '/customers')
 api.add_resource(CustomerDetailResource, '/customers/<int:id>')
@@ -186,6 +224,7 @@ api.add_resource(CarsResource, '/cars')
 api.add_resource(RentalsResource, '/rentals')
 api.add_resource(AdminsResource, '/admins')
 api.add_resource(AdminDetailResource, '/admins/<int:id>')
+api.add_resource(UserResource, '/users', '/users/<int:user_id>')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
