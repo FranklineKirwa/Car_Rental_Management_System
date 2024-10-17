@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import request, jsonify
 from flask_restful import Resource
 from config import app, db, api
@@ -72,21 +73,25 @@ class RentalsResource(Resource):
 
     def post(self):
         data = request.get_json()
+        print(data)
         try:
             new_rental = Rental(
-                start_date=data['start_date'],
-                end_date=data['end_date'],
+                start_date=datetime.strptime(data['start_date'], '%Y-%m-%d'),
+                end_date=datetime.strptime(data['end_date'], '%Y-%m-%d'),
                 total_price=data['total_price'],
                 status=data['status'],
-                booking_date=data['booking_date'],
+                booking_date=datetime.strptime(data['booking_date'], '%Y-%m-%d'),
                 customer_id=data['customer_id'],
                 car_id=data['car_id']
             )
             db.session.add(new_rental)
+            booked_car=Car.query.filter_by(id=data['car_id']).first()
+            booked_car.availability_status =False
             db.session.commit()
 
-            return jsonify(new_rental.to_dict()), 201
+            return new_rental.to_dict(),201
         except Exception as e:
+            print(e)
             return jsonify({"error": str(e)}), 400
 
 # Customer Detail Resource

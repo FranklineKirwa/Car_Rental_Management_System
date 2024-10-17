@@ -5,7 +5,7 @@ import Contact from "../assets/contact.svg";
 import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 
-const Navbar = () => {
+const AdminNavbar = () => {
   return (
     <nav class="block  px-4 py-2 mx-auto bg-white shadow-md rounded-md lg:px-8 lg:py-3">
       <div class="container flex flex-wrap items-center justify-between mx-auto text-slate-800">
@@ -15,7 +15,7 @@ const Navbar = () => {
             to="/"
             class="mr-4 block cursor-pointer py-1.5 text-base text-slate-800 font-semibold"
           >
-            Home
+            Admin Dashboard
           </Link>
         </div>
 
@@ -23,30 +23,21 @@ const Navbar = () => {
           <ul class="flex flex-col gap-2 mt-2 mb-4 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
             <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
               <img src={Rentals} alt="logo" className="h-5"></img>
-              <Link to="/rentals">Rentals</Link>
+              <Link to="/rentals">Manage Fleet</Link>
             </li>
             <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
               <img src={Contact} alt="logo" className="h-5"></img>
               <a href="#" class="flex items-center">
-                Contact Us
+                Manage Users
               </a>
             </li>
             <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="h-6 w-6 text-slate-500"
+              <button
+                class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                type="button"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              </svg>
-              <Link to="/login">Login</Link>
+                Logout
+              </button>{" "}
             </li>
           </ul>
         </div>
@@ -75,4 +66,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default AdminNavbar;

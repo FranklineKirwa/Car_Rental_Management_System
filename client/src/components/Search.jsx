@@ -1,5 +1,8 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
   const [carData, setCarData] = useState("");
@@ -7,6 +10,8 @@ const Search = () => {
   const [model, setModel] = useState("");
   const [pickupDate, setPickupDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
+  const [availableCars, setavailableCars] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -23,6 +28,26 @@ const Search = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ model, pickupDate, returnDate });
+
+    carData.map((car) => {
+      if (car.model == model) {
+        if (car.availability_status == true) {
+          availableCars.push(car)
+        }else{
+          Swal.fire({
+            title: 'Error!',
+            text: `Sorry, the ${car.model} is currently unavailable, please try another vehicle or date.`,
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          })
+        }
+      }
+    },
+    );
+    console.log(availableCars)
+    if (availableCars.length > 0) {
+      navigate('/available-cars', { state: { availableCars } });
+    }
   };
 
   return (

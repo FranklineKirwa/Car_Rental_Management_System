@@ -53,19 +53,23 @@ if __name__ == '__main__':
                 model="Corolla",
                 brand="Toyota",
                 year=2020,
-                price_per_day=50.00,
+                price_per_day=5000.00,
                 availability_status=True,
                 color="Blue",
-                image_url="https://pictures-kenya.jijistatic.com/70414400_MzAwLTE4OC0zMDVlMjUwNTgz.webp"
+                image_url="https://pictures-kenya.jijistatic.com/70414400_MzAwLTE4OC0zMDVlMjUwNTgz.webp",
+                full_image_url="https://www.motortrend.com/uploads/sites/5/2019/11/2020-Toyota-Corolla-Hybrid-LE-front-three-quarter-in-motion.jpg"
+
             ),
             Car(
                 model="Civic",
                 brand="Honda",
                 year=2019,
-                price_per_day=45.00,
+                price_per_day=4500.00,
                 availability_status=False,
-                color="Red",
-                image_url="https://pictures-kenya.jijistatic.com/70150977_MzAwLTE2OS01MTJmNWU5Nzlm.webp"
+                color="Black",
+                image_url="https://pictures-kenya.jijistatic.com/70150977_MzAwLTE2OS01MTJmNWU5Nzlm.webp",
+                full_image_url="https://images.dealersync.com/cloud/userdocumentprod/3/Photos/1006353/20230624042600230_IMG_3803.jpg?_=60acde452ff70e9bb726f49c7affe4fd366366d9"
+
             )
         ]
 
@@ -77,7 +81,7 @@ if __name__ == '__main__':
                         start_date=datetime.strptime('2024-08-01', '%Y-%m-%d'),
                         end_date=datetime.strptime('2024-08-05', '%Y-%m-%d'),
                         total_price=200.00,
-                        status="completed",
+                        status="booked",
                         booking_date=datetime.strptime('2024-07-25', '%Y-%m-%d'),
                         customer_id=customers[0].id,
                         car_id=cars[0].id

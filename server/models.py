@@ -55,6 +55,7 @@ class Car(db.Model, SerializerMixin):
     availability_status = db.Column(db.Boolean, nullable=False)
     color = db.Column(db.String(50), nullable=False)
     image_url = db.Column(db.String(200), nullable=True)
+    full_image_url = db.Column(db.String(200), nullable=True)
 
     rentals = db.relationship('Rental', backref='car')
 
