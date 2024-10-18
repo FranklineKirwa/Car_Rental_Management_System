@@ -1,5 +1,6 @@
 import Range from "../assets/range.png";
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const Intro = () => {
   const [message, setMessage] = useState("");
@@ -38,12 +39,16 @@ const Intro = () => {
           </p>
 
           <div className="flex justify-center lg:justify-start flex-wrap gap-4">
-            <button className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
-              Find Out More
-            </button>
-            <button className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
-              View Fleet
-            </button>
+            <Link to="/about-us">
+              <button className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                Find Out More
+              </button>
+            </Link>
+            <Link to="/rentals">
+              <button className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors">
+                View Fleet
+              </button>
+            </Link>
           </div>
         </div>
 

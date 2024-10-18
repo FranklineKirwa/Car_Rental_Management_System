@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Home from "../assets/home.svg";
 import Rentals from "../assets/car.svg";
 import Contact from "../assets/contact.svg";
@@ -6,6 +6,16 @@ import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 
 const AdminNavbar = () => {
+  const username = sessionStorage.getItem("username");
+
+  const logout = () => {
+    sessionStorage.removeItem("tk");
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("id");
+    sessionStorage.removeItem("role");
+    window.location.reload();
+  };
+
   return (
     <nav class="block  px-4 py-2 mx-auto bg-white shadow-md rounded-md lg:px-8 lg:py-3">
       <div class="container flex flex-wrap items-center justify-between mx-auto text-slate-800">
@@ -31,8 +41,16 @@ const AdminNavbar = () => {
                 Manage Users
               </a>
             </li>
+            {username ? (
+              <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
+                <p class="flex items-center">{username}</p>
+              </li>
+            ) : (
+              ""
+            )}
             <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
               <button
+                onClick={logout}
                 class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                 type="button"
               >

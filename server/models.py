@@ -103,12 +103,9 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    role = db.Column(db.String(10), nullable=False)
 
-    customer_profile_id = db.Column(db.Integer, db.ForeignKey('customer_profiles.id'))
-    customer_profile = db.relationship('CustomerProfile', backref='users')
-
-    admin_id = db.Column(db.Integer, db.ForeignKey('admins.id'))
-    admin = db.relationship('Admin', backref='users')
+   
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

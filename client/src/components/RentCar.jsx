@@ -1,12 +1,18 @@
-import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 
 const RentCar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.initFlowbite();
+    }
+  }, [location]);
 
   const { car } = location.state || {};
   const [pickupDate, setPickupDate] = useState("");
@@ -17,65 +23,75 @@ const RentCar = () => {
   const year = today.getFullYear();
   const date = today.getDate();
   const currentDate = year + "-" + month + "-" + date;
-
+  const token = sessionStorage.getItem("tk");
+  const id = sessionStorage.getItem("id");
   const rentCarNow = () => {
-    if (pickupDate != "") {
-      if (returnDate != "") {
-        console.log({ pickupDate, returnDate });
-        const config = {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-          params: {
-            isAccepted: true,
-          },
-        };
-        const url = "http://127.0.0.1:5555/rentals";
-        const data = {
-          start_date: pickupDate,
-          end_date: returnDate,
-          total_price:
-            dateDifference(pickupDate, returnDate) * car.price_per_day,
-          status: "booked",
-          booking_date: currentDate,
-          customer_id: 1,
-          car_id: car.id,
-        };
-        console.log(data);
-        axios
-          .post(url, data, config)
-          .then(function (response) {
-            console.log("Response data:", response.data);
-            sessionStorage.setItem(
-              "message",
-              `You have succesfully rented the ${
-                car.model + car.brand
-              } for ${dateDifference(pickupDate, returnDate)} days`
-            );
-            window.location.href = "/";
-          })
-          .catch(function (error) {
-            console.error(
-              "Error:",
-              error.response ? error.response.data : error.message
-            );
+    if (!token) {
+      Swal.fire({
+        title: "Error!",
+        text: `Please login first`,
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    } else {
+      if (pickupDate != "") {
+        if (returnDate != "") {
+          console.log({ pickupDate, returnDate });
+          const config = {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              isAccepted: true,
+            },
+          };
+          const url = "http://127.0.0.1:5555/rentals";
+          const data = {
+            start_date: pickupDate,
+            end_date: returnDate,
+            total_price:
+              dateDifference(pickupDate, returnDate) * car.price_per_day,
+            status: "booked",
+            booking_date: currentDate,
+            customer_id: parseInt(id),
+            car_id: car.id,
+          };
+          console.log(data);
+          axios
+            .post(url, data, config)
+            .then(function (response) {
+              console.log("Response data:", response.data);
+              sessionStorage.setItem(
+                "message",
+                `You have succesfully rented the ${
+                  car.model + car.brand
+                } for ${dateDifference(pickupDate, returnDate)} days`
+              );
+              window.location.href = "/";
+            })
+            .catch(function (error) {
+              console.error(
+                "Error:",
+                error.response ? error.response.data : error.message
+              );
+            });
+        } else {
+          Swal.fire({
+            title: "Error!",
+            text: `Please input a end date`,
+            icon: "error",
+            confirmButtonText: "Ok",
           });
+        }
       } else {
         Swal.fire({
           title: "Error!",
-          text: `Please input a end date`,
+          text: `Please input an start date`,
           icon: "error",
           confirmButtonText: "Ok",
         });
       }
-    } else {
-      Swal.fire({
-        title: "Error!",
-        text: `Please input an start date`,
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
     }
   };
 
@@ -88,6 +104,8 @@ const RentCar = () => {
   }
 
   console.log(car);
+  console.log(id);
+
   return (
     <div className="min-h-screen lg:flex lg:justify-center">
       <div className="flex flex-col items-center  lg:flex-row lg:items-start m-12 space-y-8 lg:space-y-0 lg:space-x-12">
@@ -138,19 +156,35 @@ const RentCar = () => {
                 </button>
               ) : (
                 <div className="mt-5">
-                  <p>
-                    This car is currently unavailable till{" "}
-                    {car.rentals[0].end_date}
-                  </p>
-
-                  <button
-                    data-modal-target="popup-modal"
-                    data-modal-toggle="popup-modal"
-                    class="mt-5 px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-                    type="button"
-                  >
-                    Proceed anyway
-                  </button>
+                  {id == car.rentals[0].customer_id ? (
+                    <div className="mt-5">
+                      <p>
+                        You have rented this car till {car.rentals[0].end_date}
+                      </p>
+                      <button
+                        data-modal-target="popup-modal"
+                        data-modal-toggle="popup-modal"
+                        class="mt-5 px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                        type="button"
+                      >
+                        Proceed anyway
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      {car.rentals.customer_id != undefined ? (
+                        <p>
+                          This car is currently unavailable till{" "}
+                          {car.rentals[0].end_date}
+                        </p>
+                      ) : (
+                        <p>
+                          This car is currently unavailable till{" "}
+                          {car.rentals[0].end_date}
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

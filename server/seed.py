@@ -1,6 +1,6 @@
 from datetime import datetime
 from app import app
-from models import db, Customer, CustomerProfile, Car, Rental
+from models import User, db, Customer, CustomerProfile, Car, Rental
 
 if __name__ == '__main__':
     with app.app_context():
@@ -77,15 +77,7 @@ if __name__ == '__main__':
         db.session.commit()
 
         rentals = [
-                    Rental(
-                        start_date=datetime.strptime('2024-08-01', '%Y-%m-%d'),
-                        end_date=datetime.strptime('2024-08-05', '%Y-%m-%d'),
-                        total_price=200.00,
-                        status="booked",
-                        booking_date=datetime.strptime('2024-07-25', '%Y-%m-%d'),
-                        customer_id=customers[0].id,
-                        car_id=cars[0].id
-                    ),
+
                     Rental(
                         start_date=datetime.strptime('2024-09-10', '%Y-%m-%d'),
                         end_date=datetime.strptime('2024-09-15', '%Y-%m-%d'),
@@ -97,6 +89,20 @@ if __name__ == '__main__':
                     )
                 ]
         db.session.add_all(rentals)
+        db.session.commit()
+
+        users = [
+            User(username='Oloo', email='oloo@oloo.com',role='admin'),
+            User(username='Otieno', email='otieno@otieno.com',role='customer'),
+            User(username='Owino', email='owino@owino.com',role='customer')
+
+        ]
+
+        for user in users:
+            user.set_password('123456')
+
+
+        db.session.add_all(users)
         db.session.commit()
 
         print("Seeding with custom data completed!")

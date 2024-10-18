@@ -1,20 +1,47 @@
-from datetime import datetime
-from flask import request, jsonify,abort
+from datetime import datetime ,timedelta
+from flask import Response, json, request, jsonify,abort
 from flask_restful import Resource
 from config import app, db, api
 from models import Customer, CustomerProfile, Car, Rental, Admin, User
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required
 #from werkzeug.security import generate_password_hash, check_password_hash
 
+
+app.config['JWT_SECRET_KEY'] = 'abcdef'
+jwt = JWTManager(app)
 @app.route('/')
 def index():
     return '<h1>Car Rental Management System </h1>'
 
+class UserAuth(Resource):
+    def post(self):
+        data = request.get_json()
+        try:
+            print(data['username'])
+            username = data['username']
+            password = data['password']
+
+            user = User.query.filter_by(username=username).first()
+            if user and user.check_password(password):
+                print('Valid user')
+                access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=2))
+                print(access_token)
+
+                response_data = {"username":username, "access_token": access_token,"role":user.role,"id":user.id}
+            return Response(json.dumps(response_data), status=200, mimetype='application/json')
+
+        except Exception as e:
+            print(e)
+            return jsonify({"error": str(e)}), 400
+
 # Customers Resource
 class CustomersResource(Resource):
+    @jwt_required()
     def get(self):
         customers = Customer.query.all()
         return jsonify([customer.to_dict() for customer in customers])
 
+    @jwt_required()
     def post(self):
         data = request.get_json()
         try:
@@ -47,6 +74,7 @@ class CarsResource(Resource):
         cars = Car.query.all()
         return jsonify([car.to_dict() for car in cars])
 
+    @jwt_required()
     def post(self):
         data = request.get_json()
         try:
@@ -67,10 +95,12 @@ class CarsResource(Resource):
 
 # Rentals Resource
 class RentalsResource(Resource):
+    @jwt_required()
     def get(self):
         rentals = Rental.query.all()
         return jsonify([rental.to_dict() for rental in rentals])
 
+    @jwt_required()
     def post(self):
         data = request.get_json()
         print(data)
@@ -96,10 +126,12 @@ class RentalsResource(Resource):
 
 # Customer Detail Resource
 class CustomerDetailResource(Resource):
+    @jwt_required()
     def get(self, id):
         customer = Customer.query.get_or_404(id)
         return jsonify(customer.to_dict())
 
+    @jwt_required()
     def patch(self, id):
         customer = Customer.query.get_or_404(id)
         data = request.get_json()
@@ -119,6 +151,7 @@ class CustomerDetailResource(Resource):
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
+    @jwt_required()
     def delete(self, id):
         customer = Customer.query.get_or_404(id)
         try:
@@ -130,10 +163,12 @@ class CustomerDetailResource(Resource):
 
 # Admins Resource
 class AdminsResource(Resource):
+    @jwt_required()
     def get(self):
         admins = Admin.query.all()
         return jsonify([admin.to_dict() for admin in admins])
 
+    @jwt_required()
     def post(self):
         data = request.get_json()
         try:
@@ -151,10 +186,12 @@ class AdminsResource(Resource):
 
 # Admin Detail Resource
 class AdminDetailResource(Resource):
+    @jwt_required()
     def get(self, id):
         admin = Admin.query.get_or_404(id)
         return jsonify(admin.to_dict())
 
+    @jwt_required()
     def patch(self, id):
         admin = Admin.query.get_or_404(id)
         data = request.get_json()
@@ -170,6 +207,7 @@ class AdminDetailResource(Resource):
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
+    @jwt_required()
     def delete(self, id):
         admin = Admin.query.get_or_404(id)
         try:
@@ -180,12 +218,14 @@ class AdminDetailResource(Resource):
             return jsonify({"error": str(e)}), 400
 
 class UserResource(Resource):
+    @jwt_required()
     def get(self, user_id):
         user = User.query.get(user_id)
         if user is None:
             abort(404, description="User not found")
         return jsonify(user.to_dict()), 200
 
+    @jwt_required()
     def post(self):
         data = request.get_json()
         new_user = User(
@@ -197,6 +237,7 @@ class UserResource(Resource):
         db.session.commit()
         return jsonify(new_user.to_dict()), 201
 
+    @jwt_required()
     def put(self, user_id):
         user = User.query.get(user_id)
         if user is None:
@@ -209,6 +250,7 @@ class UserResource(Resource):
         db.session.commit()
         return jsonify(user.to_dict()), 200
 
+    @jwt_required()
     def delete(self, user_id):
         user = User.query.get(user_id)
         if user is None:
@@ -218,6 +260,7 @@ class UserResource(Resource):
         return '', 204
 
 # Add Resources to API
+api.add_resource(UserAuth, '/login')
 api.add_resource(CustomersResource, '/customers')
 api.add_resource(CustomerDetailResource, '/customers/<int:id>')
 api.add_resource(CarsResource, '/cars')

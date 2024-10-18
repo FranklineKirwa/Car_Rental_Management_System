@@ -6,6 +6,15 @@ import Logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const username = sessionStorage.getItem("username");
+  const logout = () => {
+    sessionStorage.removeItem("tk");
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("id");
+    sessionStorage.removeItem("role");
+    window.location.reload();
+  };
+
   return (
     <nav class="block  px-4 py-2 mx-auto bg-white shadow-md rounded-md lg:px-8 lg:py-3">
       <div class="container flex flex-wrap items-center justify-between mx-auto text-slate-800">
@@ -31,23 +40,41 @@ const Navbar = () => {
                 Contact Us
               </a>
             </li>
-            <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="h-6 w-6 text-slate-500"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                />
-              </svg>
-              <Link to="/login">Login</Link>
-            </li>
+            {username ? (
+              <div className="flex justify-center items-center">
+                <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
+                  <p class="flex items-center">{username}</p>
+                </li>
+
+                <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
+                  <button
+                    onClick={logout}
+                    class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    type="button"
+                  >
+                    Logout
+                  </button>{" "}
+                </li>
+              </div>
+            ) : (
+              <li class="flex items-center p-1 text-sm gap-x-2 text-slate-600">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="h-6 w-6 text-slate-500"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                  />
+                </svg>
+                <Link to="/login">Login</Link>
+              </li>
+            )}
           </ul>
         </div>
         <button

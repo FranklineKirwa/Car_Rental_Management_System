@@ -6,15 +6,35 @@ const Admin = () => {
   const [rentedCars, setRentedCars] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5555/rentals")
-      .then((response) => {
-        setRentedCars(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    const token = sessionStorage.getItem("tk");
+    const role = sessionStorage.getItem("role");
+
+    if (!token) {
+      window.location.href = "/login";
+    }
+
+    if (role == "customer") {
+      window.location.href = "/";
+    }
+
+    console.log(token);
+    if (token) {
+      axios
+        .get("http://localhost:5555/rentals", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setRentedCars(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      window.location.href = "/login";
+    }
   }, []);
 
   function dateDifference(startDateStr, endDateStr) {
@@ -90,9 +110,13 @@ const Admin = () => {
                       </td>
 
                       <td class="p-4 border-b border-slate-200 py-5">
-                        <p class="block font-semibold text-sm text-slate-800">
-                          {car.customer.name}
-                        </p>
+                        {car.customer ? (
+                          <p class="block font-semibold text-sm text-slate-800">
+                            {car.customer.name}
+                          </p>
+                        ) : (
+                          ""
+                        )}
                       </td>
 
                       <td class="p-4 border-b border-slate-200 py-5">
