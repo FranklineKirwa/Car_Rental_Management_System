@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
         customers = [
             Customer(
-                name="John Doe",
+                name="Otieno",
                 email="john.doe@example.com",
                 phone_number="555-1234",
                 address="123 Main St, Anytown, USA",
@@ -37,8 +37,8 @@ if __name__ == '__main__':
                 profile_id=customer_profiles[0].id
             ),
             Customer(
-                name="Jane Smith",
-                email="jane.smith@example.com",
+                name="Otieno",
+                email="otieno@example.com",
                 phone_number="555-5678",
                 address="456 Oak St, Othertown, USA",
                 date_of_birth=datetime.strptime('1990-09-23', '%Y-%m-%d').date(),
@@ -55,7 +55,7 @@ if __name__ == '__main__':
                 year=2020,
                 price_per_day=5000.00,
                 availability_status=True,
-                color="Blue",
+                color="white",
                 image_url="https://pictures-kenya.jijistatic.com/70414400_MzAwLTE4OC0zMDVlMjUwNTgz.webp",
                 full_image_url="https://www.motortrend.com/uploads/sites/5/2019/11/2020-Toyota-Corolla-Hybrid-LE-front-three-quarter-in-motion.jpg"
 
@@ -71,6 +71,7 @@ if __name__ == '__main__':
                 full_image_url="https://images.dealersync.com/cloud/userdocumentprod/3/Photos/1006353/20230624042600230_IMG_3803.jpg?_=60acde452ff70e9bb726f49c7affe4fd366366d9"
 
             )
+
         ]
 
         db.session.add_all(cars)
